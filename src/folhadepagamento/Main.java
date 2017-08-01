@@ -103,7 +103,7 @@ public class Main {
             qntEmpregado++;
         }
         if (comando == 3) {
-            System.out.println("Insira a comissao do empregado:");
+            System.out.println("Insira o salario base do empregado:");
             pagamento = scan.nextInt();
             comissionado.add(new Comissionado(qntEmpregado, nome, endereco, "Comissionado", pagamento));
             qntEmpregado++;
@@ -150,9 +150,7 @@ public class Main {
 
         for (int i = 0; i < horista.size(); i++) {
             Horista horista = Main.horista.get(i);
-            System.out.println(id + "oi" + horista.getId());
             if (horista.getId() == id) {
-                System.out.println("oi");
                 if (!horista.isBateuPonto()) {
                     try {
                         System.out.println("Insira o horario de entrada (dd/mm/yyyy hh:mm:ss) do empregado " + horista.getNome());
@@ -160,13 +158,12 @@ public class Main {
                         horista.setEntrada(DateFormat.getDateTimeInstance().parse(dataEntrada));
                         horista.setBateuPonto(true);
                         System.out.println(horista.getEntrada());
-                        return ;
+                        return;
                     } catch (ParseException ex) {
                         System.out.println("Digite a data corretamente!");
                         return;
                     }
-                }
-                else {
+                } else {
                     try {
                         System.out.println("Insira o horario de saida (dd/mm/yyyy hh:mm:ss) do empregado " + horista.getNome());
                         String dataSaida = scan.nextLine();
@@ -174,18 +171,18 @@ public class Main {
                         cal.setTime(horista.getSaida());
 
                         int minutosTrabalhados = (int) TimeUnit.MILLISECONDS.toMinutes(horista.getSaida().getTime() - horista.getEntrada().getTime());
-                        horista.setHorasTrabalhadas((double) minutosTrabalhados/60, cal.get(Calendar.DAY_OF_MONTH));
+                        horista.setHorasTrabalhadas((double) minutosTrabalhados / 60, cal.get(Calendar.DAY_OF_MONTH));
                         System.out.println("Horas trabalhadas do empregado " + horista.getNome() + " : " + horista.getHorasTrabalhadas(cal.get(Calendar.DAY_OF_MONTH)));
                         System.out.println("No dia : " + cal.get(Calendar.DAY_OF_MONTH));
 
                         horista.setBateuPonto(false);
-                        double total =(double) minutosTrabalhados/60;
+                        double total = (double) minutosTrabalhados / 60;
                         System.out.println("Tempo trabalhado  : " + total);
-                        return ;
+                        return;
 
                     } catch (ParseException ex) {
                         System.out.println("Digite a data corretamente!");
-                        return ;
+                        return;
                     }
 
                 }
@@ -195,8 +192,51 @@ public class Main {
     }
 
     public static void lancarVenda() {
+        System.out.println("Informe o id do empregado no qual voce deseja lancar a venda:");
+        exibirTodosEmpregados(false, false, true);
+        int id = scan.nextInt();
 
+        for (int i = 0; i < comissionado.size(); i++) {
+            Comissionado comissionado = Main.comissionado.get(i);
+            if (comissionado.getId() == id) {
+                System.out.println("----------------------");
+                System.out.println("1 - Registrar Venda");
+                System.out.println("2 - Ver produtos vendidos por este empregado");
+                int comando = scan.nextInt();
+
+                if (comando == 1) { // Registrar Venda
+                    System.out.println("Empregado : " + comissionado.getNome());
+
+                    System.out.println("Insira o nome do produto :");
+                    scan.nextLine();
+                    String nome = scan.nextLine();
+                    System.out.println(comissionado.getQntVendas());
+                    comissionado.setVendaNome(comissionado.getQntVendas(), nome);
+
+                    System.out.println("Insira o valor da venda :");
+                    double valor = scan.nextDouble();
+                    comissionado.setVendaValor(comissionado.getQntVendas(), valor);
+
+
+                    System.out.println("Venda salva com sucesso!");
+                    System.out.println("------------------------");
+                    comissionado.setQntVendas();
+
+                } else { // Ver produtos vendidos por este empregado
+                    if (comissionado.getQntVendas() > 0) {
+                        for (i = 0; i < comissionado.getQntVendas(); i++) {
+                            System.out.println("----------- VENDA -----------");
+                            System.out.println("Nome do vendedor : " + comissionado.getNome());
+                            System.out.println("Id do vendedor : " + comissionado.getId());
+                            System.out.println("Nome do produto : " + comissionado.getVendaNome(i));
+                            System.out.println("Valor do produto : " + comissionado.getVendaValor(i));
+                        }
+                    }
+                }
+            }
+        }
     }
+
 
     public static void lancarTaxaServico() {
 
